@@ -1,0 +1,62 @@
+[theme]
+# ── Base ──────────────────────────────────────────────────────────────────────
+base                        = "dark"
+
+# ── Colours ───────────────────────────────────────────────────────────────────
+# Deep forest floor background
+backgroundColor             = "#0b1a0e"
+# Slightly lighter for sidebar, widgets, cards
+secondaryBackgroundColor    = "#132618"
+# Leaf green — used for buttons, sliders, active tabs, focus rings
+primaryColor                = "#3ecf6e"
+# Off-white with a warm green tint — easy on the eyes
+textColor                   = "#dff5e3"
+
+# Link colour — ocean blue to complement the earth greens
+linkColor                   = "#5bbcdd"
+
+# Borders — muted forest green so widgets feel grounded
+borderColor                 = "#1e4028"
+showWidgetBorder            = true
+showSidebarBorder           = false
+
+# Rounded corners like natural shapes, not sharp tech edges
+baseRadius                  = "0.6rem"
+buttonRadius                = "full"
+
+# ── Fonts ─────────────────────────────────────────────────────────────────────
+# Body: Nunito — friendly, rounded, very readable
+font                        = "Nunito:https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600&display=swap"
+# Headings: Raleway — elegant, nature-magazine feel
+headingFont                 = "Raleway:https://fonts.googleapis.com/css2?family=Raleway:wght@600;700;800&display=swap"
+# Code: JetBrains Mono — sharp and readable for numbers/formulas
+codeFont                    = "'JetBrains Mono':https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap"
+
+headingFontWeight           = 700
+baseFontSize                = "15px"
+
+# ── Basic colour palette (used by st.badge, sparklines, alerts etc.) ──────────
+# Maps to sustainability colours: earth tones + ocean blue
+greenColor                  = "#3ecf6e"
+blueColor                   = "#3b9eca"
+orangeColor                 = "#d4883a"
+redColor                    = "#c0392b"
+yellowColor                 = "#c9a227"
+violetColor                 = "#7b68c8"
+
+# ── Chart colours (Plotly/Matplotlib series colours) ─────────────────────────
+chartCategoricalColors      = ["#3ecf6e", "#3b9eca", "#d4883a", "#c9a227", "#7b68c8", "#5bbcdd"]
+
+# ── Dataframe ─────────────────────────────────────────────────────────────────
+dataframeBorderColor        = "#1e4028"
+dataframeHeaderBackgroundColor = "#132618"
+
+# ── Sidebar (can override main theme independently) ───────────────────────────
+[theme.sidebar]
+backgroundColor             = "#0e2114"
+secondaryBackgroundColor    = "#173020"
+primaryColor                = "#3ecf6e"
+textColor                   = "#c8eed0"
+borderColor                 = "#1e4028"
+font                        = "Nunito:https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600&display=swap"
+headingFont                 = "Raleway:https://fonts.googleapis.com/css2?family=Raleway:wght@600;700;800&display=swap"
