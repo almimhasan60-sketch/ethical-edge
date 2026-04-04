@@ -1,0 +1,1449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ethical Edge — Sustainable Portfolio Optimiser</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ── RESET & BASE ─────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --forest:   #0b1a0e;
+  --bark:     #132618;
+  --moss:     #1e4028;
+  --leaf:     #3ecf6e;
+  --leaf-dim: #2a9e50;
+  --cream:    #f5f0e8;
+  --sand:     #e8dfc8;
+  --ochre:    #c9943a;
+  --sky:      #4a9eca;
+  --red:      #c0392b;
+  --text:     #dff5e3;
+  --muted:    #8ab89a;
+  --serif:    'Playfair Display', Georgia, serif;
+  --sans:     'DM Sans', system-ui, sans-serif;
+  --mono:     'DM Mono', monospace;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--forest);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+/* ── SCROLL REVEAL ───────────────────────────────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ── NAVIGATION ──────────────────────────────────────────────────────────── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  background: rgba(11, 26, 14, 0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--moss);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 3rem;
+  height: 56px;
+}
+.nav-logo {
+  font-family: var(--serif);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--leaf);
+  letter-spacing: -0.3px;
+}
+.nav-links {
+  display: flex;
+  gap: 2rem;
+  list-style: none;
+}
+.nav-links a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--leaf); }
+
+/* ── HERO ─────────────────────────────────────────────────────────────────── */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  padding: 7rem 4rem 4rem;
+}
+
+/* animated background mesh */
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 80% 20%, rgba(62,207,110,0.07) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 60% at 10% 80%, rgba(74,158,202,0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 30% 30% at 50% 50%, rgba(62,207,110,0.03) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+/* animated grid lines */
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(62,207,110,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(62,207,110,0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
+}
+
+.hero-content { position: relative; z-index: 1; max-width: 700px; }
+
+.hero-tag {
+  display: inline-block;
+  background: rgba(62,207,110,0.1);
+  border: 1px solid rgba(62,207,110,0.3);
+  border-radius: 20px;
+  padding: 0.3rem 1rem;
+  font-size: 0.72rem;
+  color: var(--leaf);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+}
+
+.hero h1 {
+  font-family: var(--serif);
+  font-size: clamp(3.5rem, 7vw, 6rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -2px;
+  color: var(--cream);
+  margin-bottom: 0.3rem;
+}
+
+.hero h1 span { color: var(--leaf); }
+
+.hero-sub {
+  font-size: 1.1rem;
+  color: var(--muted);
+  margin-bottom: 1.5rem;
+  font-style: italic;
+  font-family: var(--serif);
+}
+
+.hero-formula {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 1rem;
+  color: var(--leaf);
+  background: rgba(62,207,110,0.07);
+  border: 1px solid rgba(62,207,110,0.2);
+  border-radius: 8px;
+  padding: 0.6rem 1.4rem;
+  margin-bottom: 2rem;
+}
+
+.hero-badges {
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.badge {
+  padding: 0.3rem 0.9rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  border: 1px solid;
+}
+.badge-green  { color: var(--leaf);  border-color: rgba(62,207,110,0.35);  background: rgba(62,207,110,0.08); }
+.badge-sky    { color: var(--sky);   border-color: rgba(74,158,202,0.35);  background: rgba(74,158,202,0.08); }
+.badge-ochre  { color: var(--ochre); border-color: rgba(201,148,58,0.35);  background: rgba(201,148,58,0.08); }
+
+.hero-visual {
+  position: absolute;
+  right: 4rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 380px;
+}
+
+/* ── SECTION BASE ─────────────────────────────────────────────────────────── */
+section {
+  padding: 6rem 4rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.section-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--leaf);
+  margin-bottom: 0.8rem;
+}
+
+.section-title {
+  font-family: var(--serif);
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700;
+  color: var(--cream);
+  line-height: 1.15;
+  margin-bottom: 1rem;
+  letter-spacing: -0.5px;
+}
+
+.section-intro {
+  color: var(--muted);
+  font-size: 1rem;
+  max-width: 600px;
+  margin-bottom: 3rem;
+  line-height: 1.8;
+}
+
+/* divider */
+.rule {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, var(--moss), transparent);
+  margin: 0;
+}
+
+/* ── THEORY CARDS ─────────────────────────────────────────────────────────── */
+.theory-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.theory-card {
+  background: var(--bark);
+  border: 1px solid var(--moss);
+  border-radius: 12px;
+  padding: 1.8rem;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.25s, transform 0.25s;
+}
+.theory-card:hover {
+  border-color: var(--leaf);
+  transform: translateY(-3px);
+}
+.theory-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--leaf), transparent);
+}
+
+.theory-icon {
+  font-size: 1.8rem;
+  margin-bottom: 0.8rem;
+  display: block;
+}
+
+.theory-card h3 {
+  font-family: var(--serif);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--cream);
+  margin-bottom: 0.6rem;
+}
+
+.theory-card p {
+  font-size: 0.88rem;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+/* ── ESG PILLARS ──────────────────────────────────────────────────────────── */
+.pillars {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.pillar {
+  border-radius: 12px;
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.pillar-e {
+  background: linear-gradient(135deg, rgba(62,207,110,0.12), rgba(62,207,110,0.04));
+  border: 1px solid rgba(62,207,110,0.25);
+}
+.pillar-s {
+  background: linear-gradient(135deg, rgba(74,158,202,0.12), rgba(74,158,202,0.04));
+  border: 1px solid rgba(74,158,202,0.25);
+}
+.pillar-g {
+  background: linear-gradient(135deg, rgba(201,148,58,0.12), rgba(201,148,58,0.04));
+  border: 1px solid rgba(201,148,58,0.25);
+}
+
+.pillar-letter {
+  font-family: var(--serif);
+  font-size: 4rem;
+  font-weight: 900;
+  line-height: 1;
+  margin-bottom: 0.5rem;
+  opacity: 0.15;
+  position: absolute;
+  right: 1.2rem;
+  top: 0.8rem;
+}
+.pillar-e .pillar-letter { color: var(--leaf); }
+.pillar-s .pillar-letter { color: var(--sky); }
+.pillar-g .pillar-letter { color: var(--ochre); }
+
+.pillar h3 {
+  font-family: var(--serif);
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+.pillar-e h3 { color: var(--leaf); }
+.pillar-s h3 { color: var(--sky); }
+.pillar-g h3 { color: var(--ochre); }
+
+.pillar ul {
+  list-style: none;
+  padding: 0;
+}
+.pillar li {
+  font-size: 0.85rem;
+  color: var(--muted);
+  padding: 0.25rem 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.pillar li::before {
+  content: "→";
+  font-size: 0.7rem;
+  opacity: 0.5;
+  flex-shrink: 0;
+}
+
+/* ── SIN STOCKS ───────────────────────────────────────────────────────────── */
+.sin-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.sin-card {
+  background: rgba(192,57,43,0.08);
+  border: 1px solid rgba(192,57,43,0.2);
+  border-radius: 10px;
+  padding: 1.2rem;
+  text-align: center;
+  transition: border-color 0.2s;
+}
+.sin-card:hover { border-color: rgba(192,57,43,0.5); }
+.sin-card .sin-icon { font-size: 2rem; display: block; margin-bottom: 0.5rem; }
+.sin-card h4 { font-size: 0.85rem; font-weight: 600; color: var(--cream); margin-bottom: 0.3rem; }
+.sin-card p  { font-size: 0.78rem; color: var(--muted); }
+
+/* ── UTILITY SECTION ──────────────────────────────────────────────────────── */
+.utility-box {
+  background: var(--bark);
+  border: 1px solid var(--moss);
+  border-radius: 16px;
+  padding: 3rem;
+  position: relative;
+  overflow: hidden;
+  margin: 2rem 0;
+}
+.utility-box::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 60% at 80% 50%, rgba(62,207,110,0.05) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.utility-formula {
+  font-family: var(--mono);
+  font-size: clamp(1.1rem, 2.5vw, 1.6rem);
+  color: var(--leaf);
+  text-align: center;
+  padding: 1.5rem 2rem;
+  background: rgba(62,207,110,0.05);
+  border: 1px solid rgba(62,207,110,0.15);
+  border-radius: 10px;
+  margin-bottom: 2rem;
+  letter-spacing: 0.02em;
+}
+
+.param-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.param {
+  background: rgba(62,207,110,0.04);
+  border: 1px solid rgba(62,207,110,0.12);
+  border-radius: 8px;
+  padding: 1rem 1.2rem;
+}
+.param .symbol {
+  font-family: var(--mono);
+  font-size: 1.2rem;
+  color: var(--leaf);
+  font-weight: 500;
+  display: block;
+  margin-bottom: 0.3rem;
+}
+.param .meaning {
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* ── APP DESIGN SECTION ───────────────────────────────────────────────────── */
+.app-layout {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
+.app-sidebar-mock {
+  background: var(--bark);
+  border: 1px solid var(--moss);
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.app-sidebar-mock h4 {
+  font-family: var(--serif);
+  font-size: 0.85rem;
+  color: var(--leaf);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 1.2rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid var(--moss);
+}
+
+.step-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.step-item:last-child { border-bottom: none; margin-bottom: 0; }
+
+.step-num {
+  width: 24px;
+  height: 24px;
+  background: rgba(62,207,110,0.15);
+  border: 1px solid rgba(62,207,110,0.3);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--leaf);
+  flex-shrink: 0;
+}
+
+.step-text h5 {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--cream);
+  margin-bottom: 0.2rem;
+}
+.step-text p {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.app-outputs {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.output-card {
+  background: var(--bark);
+  border: 1px solid var(--moss);
+  border-radius: 10px;
+  padding: 1.2rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: border-color 0.2s;
+}
+.output-card:hover { border-color: var(--leaf); }
+.output-icon { font-size: 1.5rem; flex-shrink: 0; }
+.output-card h5 { font-size: 0.88rem; font-weight: 600; color: var(--cream); margin-bottom: 0.2rem; }
+.output-card p  { font-size: 0.78rem; color: var(--muted); }
+
+/* ── PORTFOLIO THEORY ─────────────────────────────────────────────────────── */
+.portfolio-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
+.portfolio-concept {
+  background: var(--bark);
+  border: 1px solid var(--moss);
+  border-radius: 12px;
+  padding: 1.8rem;
+}
+.portfolio-concept h3 {
+  font-family: var(--serif);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--leaf);
+  margin-bottom: 0.8rem;
+}
+.portfolio-concept p {
+  font-size: 0.86rem;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+/* ── WORKED EXAMPLE ───────────────────────────────────────────────────────── */
+.example-section {
+  background: var(--bark);
+  border: 1px solid var(--moss);
+  border-radius: 16px;
+  padding: 3rem;
+  position: relative;
+  overflow: hidden;
+}
+.example-section::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--leaf), var(--sky), transparent);
+}
+
+.example-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 2.5rem;
+  gap: 2rem;
+}
+.investor-avatar {
+  width: 60px;
+  height: 60px;
+  background: rgba(62,207,110,0.15);
+  border: 2px solid rgba(62,207,110,0.3);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  flex-shrink: 0;
+}
+
+.example-profile h3 {
+  font-family: var(--serif);
+  font-size: 1.4rem;
+  color: var(--cream);
+  margin-bottom: 0.3rem;
+}
+.example-profile p { font-size: 0.88rem; color: var(--muted); }
+.example-profile .tags { display: flex; gap: 0.5rem; margin-top: 0.6rem; flex-wrap: wrap; }
+
+.example-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.ex-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+.ex-table th {
+  background: rgba(62,207,110,0.1);
+  color: var(--leaf);
+  font-weight: 600;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.6rem 0.8rem;
+  text-align: left;
+  border-bottom: 1px solid var(--moss);
+}
+.ex-table td {
+  padding: 0.6rem 0.8rem;
+  color: var(--muted);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  font-family: var(--mono);
+  font-size: 0.82rem;
+}
+.ex-table tr.highlight td {
+  color: var(--leaf);
+  font-weight: 600;
+  background: rgba(62,207,110,0.04);
+}
+
+.result-metrics {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.result-metric {
+  background: rgba(62,207,110,0.05);
+  border: 1px solid rgba(62,207,110,0.15);
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+}
+.result-metric .val {
+  font-family: var(--mono);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--leaf);
+  display: block;
+  margin-bottom: 0.2rem;
+}
+.result-metric .lbl {
+  font-size: 0.72rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* ── FRONTIER VISUAL ──────────────────────────────────────────────────────── */
+.frontier-visual {
+  background: var(--bark);
+  border: 1px solid var(--moss);
+  border-radius: 12px;
+  padding: 2rem;
+  margin: 2rem 0;
+}
+
+.frontier-svg {
+  width: 100%;
+  height: 280px;
+}
+
+/* ── UNIQUE FEATURES ──────────────────────────────────────────────────────── */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.feature {
+  background: var(--bark);
+  border: 1px solid var(--moss);
+  border-radius: 10px;
+  padding: 1.4rem;
+  transition: border-color 0.2s, transform 0.2s;
+}
+.feature:hover { border-color: var(--leaf-dim); transform: translateY(-2px); }
+.feature .feat-icon { font-size: 1.3rem; margin-bottom: 0.6rem; display: block; }
+.feature h4 { font-size: 0.88rem; font-weight: 600; color: var(--cream); margin-bottom: 0.3rem; }
+.feature p  { font-size: 0.78rem; color: var(--muted); line-height: 1.6; }
+
+/* ── TEAM TABLE ───────────────────────────────────────────────────────────── */
+.team-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+.team-table th {
+  background: rgba(62,207,110,0.1);
+  color: var(--leaf);
+  font-weight: 600;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0.8rem 1.2rem;
+  text-align: left;
+  border-bottom: 2px solid var(--moss);
+}
+.team-table td {
+  padding: 1rem 1.2rem;
+  color: var(--muted);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  vertical-align: top;
+}
+.team-table tr:hover td { background: rgba(62,207,110,0.02); }
+.team-name { color: var(--cream); font-weight: 600; }
+
+/* ── QR SECTION ───────────────────────────────────────────────────────────── */
+.qr-section {
+  background: linear-gradient(135deg, var(--bark), rgba(19,38,24,0.5));
+  border: 1px solid var(--moss);
+  border-radius: 16px;
+  padding: 3rem;
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+}
+
+.qr-box {
+  width: 160px;
+  height: 160px;
+  background: var(--cream);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 0.7rem;
+  color: var(--forest);
+  font-weight: 600;
+  text-align: center;
+  padding: 1rem;
+}
+
+.qr-info h3 {
+  font-family: var(--serif);
+  font-size: 1.6rem;
+  color: var(--cream);
+  margin-bottom: 0.5rem;
+}
+.qr-info p { color: var(--muted); font-size: 0.9rem; margin-bottom: 1rem; }
+.qr-url {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  color: var(--leaf);
+  background: rgba(62,207,110,0.07);
+  border: 1px solid rgba(62,207,110,0.2);
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  display: inline-block;
+}
+
+/* ── REFERENCES ───────────────────────────────────────────────────────────── */
+.ref-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+.ref-item {
+  background: var(--bark);
+  border: 1px solid var(--moss);
+  border-left: 3px solid var(--leaf);
+  border-radius: 0 8px 8px 0;
+  padding: 0.8rem 1.2rem;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+.ref-item strong { color: var(--cream); }
+
+/* ── FOOTER ───────────────────────────────────────────────────────────────── */
+footer {
+  text-align: center;
+  padding: 3rem;
+  border-top: 1px solid var(--moss);
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+footer strong { color: var(--leaf); }
+
+/* ── FULL WIDTH SECTIONS ──────────────────────────────────────────────────── */
+.full-bleed {
+  width: 100%;
+  padding: 0;
+}
+.full-bleed > section {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ── TWO COL ──────────────────────────────────────────────────────────────── */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: start;
+}
+
+/* ── CALLOUT ──────────────────────────────────────────────────────────────── */
+.callout {
+  border-left: 3px solid var(--leaf);
+  padding: 1rem 1.5rem;
+  background: rgba(62,207,110,0.04);
+  border-radius: 0 8px 8px 0;
+  font-size: 0.9rem;
+  color: var(--muted);
+  font-style: italic;
+  margin: 1.5rem 0;
+}
+.callout strong { color: var(--cream); font-style: normal; }
+
+/* ── RESPONSIVE ───────────────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .theory-grid, .pillars, .sin-grid,
+  .portfolio-grid, .features-grid,
+  .example-grid, .result-metrics { grid-template-columns: 1fr 1fr; }
+  .param-grid, .nav-links { display: none; }
+  .two-col, .app-layout { grid-template-columns: 1fr; }
+  .hero { padding: 7rem 2rem 4rem; }
+  .hero-visual { display: none; }
+  section { padding: 4rem 2rem; }
+  .result-metrics { grid-template-columns: repeat(3, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<!-- ── NAVIGATION ──────────────────────────────────────────────────────────── -->
+<nav>
+  <div class="nav-logo">⚖️ Ethical Edge</div>
+  <ul class="nav-links">
+    <li><a href="#what-is-esg">ESG</a></li>
+    <li><a href="#theory">Theory</a></li>
+    <li><a href="#app-design">App</a></li>
+    <li><a href="#example">Example</a></li>
+    <li><a href="#team">Team</a></li>
+    <li><a href="#scan">Scan</a></li>
+  </ul>
+</nav>
+
+<!-- ── HERO ────────────────────────────────────────────────────────────────── -->
+<div style="padding-top:56px">
+<section style="max-width:100%;padding:6rem 4rem 4rem;position:relative;overflow:hidden;">
+
+  <div style="position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 80% 20%, rgba(62,207,110,0.07) 0%, transparent 70%),radial-gradient(ellipse 40% 60% at 10% 80%, rgba(74,158,202,0.05) 0%, transparent 60%);pointer-events:none;"></div>
+  <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(62,207,110,0.025) 1px, transparent 1px),linear-gradient(90deg, rgba(62,207,110,0.025) 1px, transparent 1px);background-size:60px 60px;pointer-events:none;"></div>
+
+  <div class="reveal" style="position:relative;z-index:1;max-width:800px;">
+    <div class="hero-tag">ECN316 Sustainable Finance · QMUL Group Project 2026</div>
+    <h1 class="section-title" style="font-size:clamp(3.5rem,7vw,6rem);letter-spacing:-2px;line-height:1;color:var(--cream);margin-bottom:0.4rem;">
+      Ethical<br><span style="color:var(--leaf);">Edge</span>
+    </h1>
+    <p class="hero-sub" style="font-family:var(--serif);font-style:italic;color:var(--muted);font-size:1.2rem;margin-bottom:1.5rem;">
+      A sustainable portfolio optimiser for retail investors
+    </p>
+    <div class="hero-formula">U = E[Rp] − (γ/2)·σ²p + λ·s̄</div>
+    <div class="hero-badges" style="margin-top:1.5rem;">
+      <span class="badge badge-green">ESG-Adjusted Utility</span>
+      <span class="badge badge-sky">Two-Asset Frontier</span>
+      <span class="badge badge-ochre">Sin Stock Screening</span>
+      <span class="badge badge-green">Pillar-Weighted ESG</span>
+      <span class="badge badge-sky">Investor Personas</span>
+    </div>
+  </div>
+
+</section>
+</div>
+
+<div class="rule"></div>
+
+<!-- ── WHAT IS ESG ──────────────────────────────────────────────────────────── -->
+<div id="what-is-esg">
+<section>
+
+  <div class="reveal">
+    <div class="section-label">Section 01</div>
+    <h2 class="section-title">What is ESG Investing?</h2>
+    <p class="section-intro">
+      ESG stands for Environmental, Social and Governance — three non-financial dimensions used to evaluate how responsibly a company operates. Investors use ESG scores to build portfolios that align financial returns with broader societal values.
+    </p>
+  </div>
+
+  <div class="pillars reveal">
+
+    <div class="pillar pillar-e">
+      <span class="pillar-letter">E</span>
+      <h3>Environmental</h3>
+      <ul>
+        <li>Carbon emissions & net-zero targets</li>
+        <li>Energy use and renewable sourcing</li>
+        <li>Pollution and waste disposal</li>
+        <li>Water management</li>
+        <li>Green financing initiatives</li>
+        <li>Climate risk exposure</li>
+      </ul>
+    </div>
+
+    <div class="pillar pillar-s">
+      <span class="pillar-letter">S</span>
+      <h3>Social</h3>
+      <ul>
+        <li>Employment conditions & labour rights</li>
+        <li>Community involvement</li>
+        <li>Gender equality and diversity</li>
+        <li>Stakeholder relations</li>
+        <li>Access to medicine and services</li>
+        <li>Human rights in supply chains</li>
+      </ul>
+    </div>
+
+    <div class="pillar pillar-g">
+      <span class="pillar-letter">G</span>
+      <h3>Governance</h3>
+      <ul>
+        <li>Board independence</li>
+        <li>Executive compensation</li>
+        <li>Shareholder rights</li>
+        <li>Audit and internal controls</li>
+        <li>Corporate behaviour & ethics</li>
+        <li>CSR strategy and reporting</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div class="callout reveal">
+    <strong>Why does ESG matter financially?</strong> Research shows ESG-aware investors accept lower Sharpe ratios in exchange for greener portfolios. The <em>cost of ESG</em> — the drop in Sharpe ratio when moving from the max-Sharpe to the ESG-optimal portfolio — is the price of your green preferences (Schoenmaker, 2017).
+  </div>
+
+  <div class="theory-grid reveal">
+    <div class="theory-card">
+      <span class="theory-icon">🌱</span>
+      <h3>Sustainable Finance 1.0</h3>
+      <p>Profit maximisation while avoiding "sin stocks" — companies with very negative impacts. Hard exclusion screening applied before any optimisation.</p>
+    </div>
+    <div class="theory-card">
+      <span class="theory-icon">⚖️</span>
+      <h3>Sustainable Finance 2.0</h3>
+      <p>Stakeholder value — optimise total value T = Financial + Social + Environmental. ESG factors are integrated into the utility function alongside returns and risk.</p>
+    </div>
+    <div class="theory-card">
+      <span class="theory-icon">🌍</span>
+      <h3>Sustainable Finance 3.0</h3>
+      <p>Common good — sustainability and environmental impact are prioritised above financial returns. Long-term horizon, subject to financial feasibility.</p>
+    </div>
+  </div>
+
+</section>
+</div>
+
+<div class="rule"></div>
+
+<!-- ── SIN STOCKS ──────────────────────────────────────────────────────────── -->
+<section>
+  <div class="reveal">
+    <div class="section-label">Section 02</div>
+    <h2 class="section-title">Sin Stock Exclusions</h2>
+    <p class="section-intro">
+      Following the Sustainable Finance 1.0 framework (Schoenmaker, 2017), Ethical Edge applies hard exclusion screening before optimisation. Assets flagged in these sectors are removed entirely from the investable universe.
+    </p>
+  </div>
+
+  <div class="sin-grid reveal">
+    <div class="sin-card">
+      <span class="sin-icon">🚬</span>
+      <h4>Tobacco</h4>
+      <p>Companies producing or distributing tobacco products</p>
+    </div>
+    <div class="sin-card">
+      <span class="sin-icon">⚔️</span>
+      <h4>Weapons</h4>
+      <p>Defence contractors, arms manufacturers, cluster bombs</p>
+    </div>
+    <div class="sin-card">
+      <span class="sin-icon">🛢️</span>
+      <h4>Fossil Fuels</h4>
+      <p>Coal, oil and gas extraction; increasingly on exclusion lists due to climate risk</p>
+    </div>
+    <div class="sin-card">
+      <span class="sin-icon">🎰</span>
+      <h4>Gambling</h4>
+      <p>Casinos, betting companies, gaming platforms with social harm concerns</p>
+    </div>
+  </div>
+
+  <div class="callout reveal">
+    <strong>Why exclude before optimising?</strong> Hard screens remove assets with very negative societal impacts from consideration entirely, before any financial trade-off is made. This is philosophically different from weighting ESG in the utility function — it is a non-negotiable constraint, not a preference.
+  </div>
+</section>
+
+<div class="rule"></div>
+
+<!-- ── THEORY ──────────────────────────────────────────────────────────────── -->
+<div id="theory">
+<section>
+
+  <div class="reveal">
+    <div class="section-label">Section 03</div>
+    <h2 class="section-title">The Theory Behind the App</h2>
+    <p class="section-intro">
+      Ethical Edge extends classical mean-variance portfolio theory with an ESG preference term, following the framework from ECN316 Lecture 6.
+    </p>
+  </div>
+
+  <div class="utility-box reveal">
+    <div class="utility-formula">U = E[Rp] &nbsp;−&nbsp; (γ / 2) · σ²p &nbsp;+&nbsp; λ · s̄</div>
+    <div class="param-grid">
+      <div class="param">
+        <span class="symbol">E[Rp]</span>
+        <span class="meaning">Expected portfolio return — the weighted average return of the two assets</span>
+      </div>
+      <div class="param">
+        <span class="symbol">γ (gamma)</span>
+        <span class="meaning">Absolute risk aversion. Higher γ = investor penalises variance more heavily</span>
+      </div>
+      <div class="param">
+        <span class="symbol">σ²p</span>
+        <span class="meaning">Portfolio variance = weighted variance + covariance term. Penalised by γ/2</span>
+      </div>
+      <div class="param">
+        <span class="symbol">λ (lambda)</span>
+        <span class="meaning">ESG preference weight. λ = 0 → pure MV investor. λ > 0 → values sustainability</span>
+      </div>
+      <div class="param">
+        <span class="symbol">s̄</span>
+        <span class="meaning">Weighted average ESG score of the portfolio, using user-defined E/S/G pillar weights</span>
+      </div>
+      <div class="param">
+        <span class="symbol">ESG Cost</span>
+        <span class="meaning">Drop in Sharpe ratio when moving from the tangency portfolio to the ESG-optimal portfolio</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="portfolio-grid reveal">
+    <div class="portfolio-concept">
+      <h3>🎯 What is a Good Portfolio?</h3>
+      <p>A good portfolio maximises risk-adjusted return for a given investor. The <strong style="color:var(--cream)">Sharpe ratio</strong> (excess return per unit of risk) captures this — a ratio above 1.0 is considered excellent, above 0.5 is good. For ESG investors, a good portfolio also achieves a meaningful ESG score without sacrificing too much Sharpe ratio.</p>
+    </div>
+    <div class="portfolio-concept">
+      <h3>📉 The ESG-Efficient Frontier</h3>
+      <p>The frontier shows all possible two-asset portfolios in risk-return space. Coloured by ESG score, it reveals the sustainability-performance trade-off. The <strong style="color:var(--cream)">tangency portfolio</strong> maximises the Sharpe ratio. The <strong style="color:var(--leaf)">ESG-optimal portfolio</strong> maximises U including λs̄ — it may sit to the right of tangency if ESG preference is strong.</p>
+    </div>
+    <div class="portfolio-concept">
+      <h3>🔀 Diversification</h3>
+      <p>With correlation ρ &lt; 1, combining two assets reduces portfolio risk below the weighted average of individual risks. The <strong style="color:var(--cream)">minimum variance portfolio</strong> achieves the lowest possible σ. Lower ρ → greater diversification benefit. This is the core insight of Markowitz (1952).</p>
+    </div>
+    <div class="portfolio-concept">
+      <h3>📊 Capital Market Line (CML)</h3>
+      <p>The CML connects the risk-free asset to the tangency portfolio and represents the best possible risk-return combinations available to investors. All portfolios above the efficient frontier but on the CML involve leveraging the tangency portfolio.</p>
+    </div>
+  </div>
+
+</section>
+</div>
+
+<div class="rule"></div>
+
+<!-- ── APP DESIGN ──────────────────────────────────────────────────────────── -->
+<div id="app-design">
+<section>
+
+  <div class="reveal">
+    <div class="section-label">Section 04</div>
+    <h2 class="section-title">App Design</h2>
+    <p class="section-intro">
+      Ethical Edge is built with Streamlit and deployed publicly on Streamlit Cloud. The interface guides users through a structured 5-step input process, then presents results across four tabs.
+    </p>
+  </div>
+
+  <div class="app-layout reveal">
+
+    <div class="app-sidebar-mock">
+      <h4>⚙️ Sidebar Inputs</h4>
+      <div class="step-item">
+        <div class="step-num">1</div>
+        <div class="step-text">
+          <h5>Risk Attitude Quiz</h5>
+          <p>2 behavioural questions → auto-suggest γ. Fine-tune with slider.</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">2</div>
+        <div class="step-text">
+          <h5>ESG Commitment</h5>
+          <p>Select-slider from "None (λ=0)" to "Max (λ=4)" + fine-tune.</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">3</div>
+        <div class="step-text">
+          <h5>ESG Pillar Weights</h5>
+          <p>Separate E, S, G sliders → normalised composite score.</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">4</div>
+        <div class="step-text">
+          <h5>Exclusion Criteria</h5>
+          <p>Checkboxes for tobacco, weapons, fossil fuels, gambling + min ESG threshold.</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">5</div>
+        <div class="step-text">
+          <h5>Asset & Market Data</h5>
+          <p>E[R], σ, E/S/G scores for two named assets + ρ and rf.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="app-outputs">
+      <div class="output-card">
+        <span class="output-icon">📊</span>
+        <div>
+          <h5>Results Tab — Recommended Portfolio</h5>
+          <p>6 metric cards (weights, E[R], σ, ESG, Sharpe), plain-English summary sentence, ESG cost progress bar, full comparison table, λ-sensitivity table</p>
+        </div>
+      </div>
+      <div class="output-card">
+        <span class="output-icon">📈</span>
+        <div>
+          <h5>Charts Tab — ESG-Efficient Frontier</h5>
+          <p>Mean-variance scatter coloured by ESG score, CML, two indifference curves, 5 key portfolios marked, ESG–Sharpe frontier with ESG cost annotated, E/S/G pillar bar chart</p>
+        </div>
+      </div>
+      <div class="output-card">
+        <span class="output-icon">💡</span>
+        <div>
+          <h5>Insights Tab — Plain-English Interpretation</h5>
+          <p>Investor type classifier (Risk-Seeking / Balanced / Risk-Averse), ESG profile (Light Green / Green / Deep Green), allocation explanation, diversification analysis</p>
+        </div>
+      </div>
+      <div class="output-card">
+        <span class="output-icon">ℹ️</span>
+        <div>
+          <h5>Methodology Tab — Theory & References</h5>
+          <p>LaTeX utility function, parameter table, stoggle explanations, academic references with clickable links (Flammer 2021, Bolton & Kacperczyk 2021, Schoenmaker 2017, Berg et al. 2022)</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="reveal" style="margin-top:2rem;">
+    <h3 style="font-family:var(--serif);color:var(--cream);font-size:1.2rem;margin-bottom:1rem;">What makes Ethical Edge unique?</h3>
+    <div class="features-grid">
+      <div class="feature">
+        <span class="feat-icon">🎭</span>
+        <h4>Investor Persona Selector</h4>
+        <p>5 pre-built profiles (Young Professional, Impact Investor, Retiree etc.) auto-fill γ and λ — ideal for retail investors unfamiliar with these parameters.</p>
+      </div>
+      <div class="feature">
+        <span class="feat-icon">🏷️</span>
+        <h4>Named Asset Inputs</h4>
+        <p>Users type real company names (e.g. Apple, Shell) which flow through all tables, charts, and the plain-English summary for a realistic recommendation.</p>
+      </div>
+      <div class="feature">
+        <span class="feat-icon">📋</span>
+        <h4>λ Sensitivity Table</h4>
+        <p>Shows how optimal weights, return, risk and ESG score change as λ goes from 0 to 4 — directly illustrating the sustainability-performance trade-off.</p>
+      </div>
+      <div class="feature">
+        <span class="feat-icon">💬</span>
+        <h4>Plain-English Summary</h4>
+        <p>"Based on your profile, we recommend X% in Apple and Y% in Shell. Expected return Z%, ESG score W (moderate), Sharpe ratio 0.51 (good)."</p>
+      </div>
+      <div class="feature">
+        <span class="feat-icon">🏆</span>
+        <h4>Sharpe Rating Badge</h4>
+        <p>Every Sharpe ratio is classified as Excellent (≥1.0) / Good (≥0.5) / Fair (≥0.25) / Poor — making financial quality immediately legible.</p>
+      </div>
+      <div class="feature">
+        <span class="feat-icon">🌿</span>
+        <h4>Pillar-Weighted ESG</h4>
+        <p>Separate E, S and G inputs with user-defined pillar weights, normalised to a single composite score. Allows focus on e.g. climate over governance.</p>
+      </div>
+    </div>
+  </div>
+
+</section>
+</div>
+
+<div class="rule"></div>
+
+<!-- ── WORKED EXAMPLE ──────────────────────────────────────────────────────── -->
+<div id="example">
+<section>
+
+  <div class="reveal">
+    <div class="section-label">Section 05</div>
+    <h2 class="section-title">Retail Investor Example</h2>
+    <p class="section-intro">A worked example demonstrating Ethical Edge with a real investor profile.</p>
+  </div>
+
+  <div class="example-section reveal">
+
+    <div class="example-header">
+      <div style="display:flex;align-items:flex-start;gap:1.2rem;">
+        <div class="investor-avatar">👩‍💼</div>
+        <div class="example-profile">
+          <h3>Sarah, 34 — Balanced Impact Investor</h3>
+          <p>Medium-term horizon (2–5 years) · Cares about sustainability · Seeks solid risk-adjusted returns</p>
+          <div class="tags">
+            <span class="badge badge-green">γ = 3  (Balanced)</span>
+            <span class="badge badge-sky">λ = 1.5  (Green)</span>
+            <span class="badge badge-ochre">Excludes: Fossil Fuels</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="example-grid">
+
+      <div>
+        <p style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--leaf);font-weight:600;margin-bottom:0.8rem;">Asset Inputs</p>
+        <table class="ex-table">
+          <thead>
+            <tr><th></th><th>Apple (AAPL)</th><th>Greencoat (GRP)</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>E[R]</td><td>13%</td><td>7%</td></tr>
+            <tr><td>σ</td><td>18%</td><td>22%</td></tr>
+            <tr><td>E score</td><td>40</td><td>80</td></tr>
+            <tr><td>S score</td><td>35</td><td>70</td></tr>
+            <tr><td>G score</td><td>30</td><td>75</td></tr>
+            <tr><td>ESG (composite)</td><td>35.5</td><td>75.5</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div>
+        <p style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--leaf);font-weight:600;margin-bottom:0.8rem;">Market Inputs</p>
+        <table class="ex-table">
+          <thead><tr><th>Parameter</th><th>Value</th></tr></thead>
+          <tbody>
+            <tr><td>Correlation ρ</td><td>0.30</td></tr>
+            <tr><td>Risk-Free Rate rf</td><td>2.5%</td></tr>
+            <tr><td>Risk Aversion γ</td><td>3.0</td></tr>
+            <tr><td>ESG Preference λ</td><td>1.5</td></tr>
+            <tr><td>E/S/G weights</td><td>40% / 30% / 30%</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div>
+        <p style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--leaf);font-weight:600;margin-bottom:0.8rem;">Portfolio Comparison</p>
+        <table class="ex-table">
+          <thead><tr><th>Portfolio</th><th>AAPL</th><th>GRP</th><th>Sharpe</th></tr></thead>
+          <tbody>
+            <tr><td>MV Optimal (λ=0)</td><td>87%</td><td>13%</td><td>0.514</td></tr>
+            <tr class="highlight"><td>✅ ESG Optimal</td><td>52%</td><td>48%</td><td>0.487</td></tr>
+            <tr><td>Tangency</td><td>87%</td><td>13%</td><td>0.514</td></tr>
+            <tr><td>Min Variance</td><td>65%</td><td>35%</td><td>—</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+    <div class="result-metrics">
+      <div class="result-metric">
+        <span class="val">52%</span>
+        <span class="lbl">Apple (AAPL)</span>
+      </div>
+      <div class="result-metric">
+        <span class="val">48%</span>
+        <span class="lbl">Greencoat (GRP)</span>
+      </div>
+      <div class="result-metric">
+        <span class="val">10.4%</span>
+        <span class="lbl">Expected Return</span>
+      </div>
+      <div class="result-metric">
+        <span class="val">16.8%</span>
+        <span class="lbl">Risk (σ)</span>
+      </div>
+      <div class="result-metric" style="background:rgba(62,207,110,0.1);border-color:rgba(62,207,110,0.3);">
+        <span class="val">56.3</span>
+        <span class="lbl">ESG Score</span>
+      </div>
+    </div>
+
+    <div style="margin-top:1.5rem;padding:1rem 1.5rem;background:rgba(62,207,110,0.06);border:1px solid rgba(62,207,110,0.15);border-radius:8px;font-size:0.88rem;color:var(--muted);">
+      💬 <strong style="color:var(--cream)">"Based on your profile, we recommend investing 52% in Apple and 48% in Greencoat.</strong>
+      This gives you an expected return of <strong style="color:var(--leaf)">10.4%</strong> with risk σ = <strong style="color:var(--leaf)">16.8%</strong>,
+      an ESG score of <strong style="color:var(--leaf)">56.3/100</strong> (moderate), and a Sharpe ratio of <strong style="color:var(--leaf)">0.487</strong> (good).
+      The ESG cost of your preferences is <strong style="color:var(--ochre)">0.027</strong> in Sharpe ratio — a small price for a meaningfully greener portfolio."
+    </div>
+
+  </div>
+
+</section>
+</div>
+
+<div class="rule"></div>
+
+<!-- ── TEAM ─────────────────────────────────────────────────────────────────── -->
+<div id="team">
+<section>
+
+  <div class="reveal">
+    <div class="section-label">Section 06</div>
+    <h2 class="section-title">Team Contributions</h2>
+    <p class="section-intro">ECN316 Group Project · Queen Mary University of London · April 2026</p>
+  </div>
+
+  <div class="reveal" style="background:var(--bark);border:1px solid var(--moss);border-radius:12px;overflow:hidden;">
+    <table class="team-table">
+      <thead>
+        <tr>
+          <th>Student</th>
+          <th>Main Responsibilities</th>
+          <th>Secondary Support</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="team-name">A</span></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td><span class="team-name">B</span></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td><span class="team-name">C</span></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td><span class="team-name">D</span></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td><span class="team-name">E</span></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td><span class="team-name">F</span></td>
+          <td></td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</section>
+</div>
+
+<div class="rule"></div>
+
+<!-- ── QR CODE ─────────────────────────────────────────────────────────────── -->
+<div id="scan">
+<section>
+
+  <div class="reveal">
+    <div class="section-label">Section 07</div>
+    <h2 class="section-title">Try It Now</h2>
+  </div>
+
+  <div class="qr-section reveal">
+    <div class="qr-box">
+      <img src="qr_ethical_edge.png" alt="QR Code — Ethical Edge App"
+           style="width:140px;height:140px;object-fit:contain;"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div style="display:none;flex-direction:column;align-items:center;gap:0.3rem;font-size:0.65rem;color:var(--forest);text-align:center;">
+        <span style="font-size:1.5rem;">📱</span>
+        <span>Scan to open app</span>
+      </div>
+    </div>
+    <div class="qr-info">
+      <h3>Ethical Edge — Live App</h3>
+      <p>Scan the QR code or visit the link below to try the app on any device. Build your own sustainable portfolio in under 2 minutes.</p>
+      <a href="https://ethical-edge-1.streamlit.app/" target="_blank" class="qr-url">
+        ethical-edge-1.streamlit.app
+      </a>
+      <div style="margin-top:1.2rem;display:flex;gap:0.8rem;flex-wrap:wrap;">
+        <span class="badge badge-green">✅ Deployed on Streamlit Cloud</span>
+        <span class="badge badge-sky">GitHub: almimhasan60-sketch/ethical-edge</span>
+      </div>
+    </div>
+  </div>
+
+</section>
+</div>
+
+<div class="rule"></div>
+
+<!-- ── REFERENCES ──────────────────────────────────────────────────────────── -->
+<section>
+  <div class="reveal">
+    <div class="section-label">References</div>
+    <h2 class="section-title" style="font-size:1.8rem;">Academic References</h2>
+  </div>
+  <div class="ref-list reveal">
+    <div class="ref-item"><strong>Flammer, C. (2021)</strong> — Corporate green bonds. <em>Journal of Financial Economics</em>, 142(2), 499–516. doi:10.1016/j.jfineco.2021.01.010</div>
+    <div class="ref-item"><strong>Bolton, P. & Kacperczyk, M. (2021)</strong> — Do investors care about carbon risk? <em>Journal of Financial Economics</em>, 142(2), 517–549. doi:10.1016/j.jfineco.2021.05.008</div>
+    <div class="ref-item"><strong>Schoenmaker, D. (2017)</strong> — From Risk to Opportunity: A Framework for Sustainable Finance. Rotterdam School of Management. ssrn.com/abstract=3066210</div>
+    <div class="ref-item"><strong>Berg, F., Koelbel, J.F. & Rigobon, R. (2022)</strong> — Aggregate Confusion: The Divergence of ESG Ratings. <em>Review of Finance</em>, 26(6), 1315–1344. doi:10.1093/rof/rfac033</div>
+    <div class="ref-item"><strong>Gibson Brandon, R. et al. (2022)</strong> — Do Responsible Investors Invest Responsibly? <em>Review of Finance</em>, 26(6), 1389–1432.</div>
+    <div class="ref-item"><strong>Markowitz, H. (1952)</strong> — Portfolio Selection. <em>Journal of Finance</em>, 7(1), 77–91.</div>
+  </div>
+</section>
+
+<!-- ── FOOTER ──────────────────────────────────────────────────────────────── -->
+<footer>
+  <p><strong>⚖️ Ethical Edge</strong> &nbsp;·&nbsp; ECN316 Sustainable Finance &nbsp;·&nbsp; Queen Mary University of London &nbsp;·&nbsp; Group Project 2026</p>
+  <p style="margin-top:0.5rem;font-size:0.75rem;">Built with Python · Streamlit · Deployed on Streamlit Cloud</p>
+</footer>
+
+<script>
+// Scroll reveal
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      // stagger children
+      const children = e.target.querySelectorAll('.theory-card, .pillar, .sin-card, .feature, .output-card, .portfolio-concept, .param, .result-metric');
+      children.forEach((child, i) => {
+        child.style.transitionDelay = `${i * 0.08}s`;
+        child.classList.add('reveal');
+        setTimeout(() => child.classList.add('visible'), i * 80);
+      });
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
