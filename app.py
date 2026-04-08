@@ -278,13 +278,13 @@ def build_sensitivity_table():
     return pd.DataFrame(rows)
 
 def apply_chart_style(ax, fig):
-    fig.patch.set_facecolor("#060a06")
-    ax.set_facecolor("#0d1f10")
-    ax.tick_params(colors="#b8debb",labelsize=9)
-    ax.xaxis.label.set_color("#b8debb"); ax.yaxis.label.set_color("#b8debb")
-    ax.title.set_color("#4ade80")
-    for sp in ax.spines.values(): sp.set_edgecolor("#1a3a1a")
-    ax.grid(True,color="#142814",linewidth=0.6)
+    fig.patch.set_facecolor("#0e0e12")
+    ax.set_facecolor("#0e0e12")
+    ax.tick_params(colors="#c8ccd8",labelsize=9)
+    ax.xaxis.label.set_color("#c8ccd8"); ax.yaxis.label.set_color("#c8ccd8")
+    ax.title.set_color("#00e676")
+    for sp in ax.spines.values(): sp.set_edgecolor("#2a2a3a")
+    ax.grid(True,color="#1e1e2a",linewidth=0.6)
 
 # FEATURE: Greenwashing flag (Berg et al. 2022 — ESG rating disagreement)
 def greenwashing_flag(e, s, g):
@@ -401,8 +401,8 @@ with tab1:
             help=f"E:{es:.0f}  S:{ss:.0f}  G:{gs:.0f}"
         )
         col.caption(f"Carbon proxy: **{cs:.1f}/100**  {cs_lbl}")
-    style_metric_cards(background_color="#0d1f10", border_left_color="#4ade80",
-                       border_color="#1a3a1a", box_shadow=True)
+    style_metric_cards(background_color="#0e0e12", border_left_color="#00e676",
+                       border_color="#2a2a3a", box_shadow=True)
 
     # FEATURE: Greenwashing flag
     for nm, es, ss, gs in [(name1,e1,s1,g1),(name2,e2,s2,g2)]:
@@ -424,8 +424,8 @@ with tab1:
     vals1  = [scope1_1, scope2_1, scope3_1]
     vals2  = [scope1_2, scope2_2, scope3_2]
     x_sc   = np.arange(3); w_sc = 0.35
-    bars_sc1 = ax_sc.bar(x_sc - w_sc/2, vals1, w_sc, label=name1, color="#ef4444", alpha=0.85)
-    bars_sc2 = ax_sc.bar(x_sc + w_sc/2, vals2, w_sc, label=name2, color="#4ade80", alpha=0.85)
+    bars_sc1 = ax_sc.bar(x_sc - w_sc/2, vals1, w_sc, label=name1, color="#ff5252", alpha=0.85)
+    bars_sc2 = ax_sc.bar(x_sc + w_sc/2, vals2, w_sc, label=name2, color="#00e676", alpha=0.85)
 
     # Portfolio weighted scope scores
     w1_opt = float(opt["Weight Asset 1"]); w2_opt = float(opt["Weight Asset 2"])
@@ -435,14 +435,14 @@ with tab1:
     ax_sc.plot(x_sc, port_scopes, "D--", color="white", lw=1.5, ms=8,
                label=f"Your Portfolio (weighted)", zorder=5)
 
-    ax_sc.set_xticks(x_sc); ax_sc.set_xticklabels(scopes, color="#b8debb")
+    ax_sc.set_xticks(x_sc); ax_sc.set_xticklabels(scopes, color="#c8ccd8")
     ax_sc.set_ylabel("Emission Intensity (0=low, 100=high)")
     ax_sc.set_title("Carbon Emissions by Scope — aligned with GHG Protocol", fontweight="bold")
-    ax_sc.legend(facecolor="#0d1f10", labelcolor="#b8debb", edgecolor="#1a3a1a")
+    ax_sc.legend(facecolor="#0e0e12", labelcolor="#c8ccd8", edgecolor="#2a2a3a")
     ax_sc.set_ylim(0, 115)
     for bar in list(bars_sc1) + list(bars_sc2):
         ax_sc.text(bar.get_x()+bar.get_width()/2, bar.get_height()+1.5,
-                   f"{bar.get_height():.0f}", ha="center", va="bottom", fontsize=9, color="#b8debb")
+                   f"{bar.get_height():.0f}", ha="center", va="bottom", fontsize=9, color="#c8ccd8")
     plt.tight_layout()
     st.pyplot(fig_sc)
     plt.close(fig_sc)
@@ -484,8 +484,8 @@ with tab1:
     m5.metric("ESG Score",        f"{opt['ESG Score']:.1f}")
     m6.metric("Sharpe Ratio",     f"{opt['Sharpe Ratio']:.3f}",
               delta=sharpe_badge(float(opt["Sharpe Ratio"])))
-    style_metric_cards(background_color="#0d1f10", border_left_color="#4ade80",
-                       border_color="#1a3a1a", box_shadow=True)
+    style_metric_cards(background_color="#0e0e12", border_left_color="#00e676",
+                       border_color="#2a2a3a", box_shadow=True)
 
     if lam>0 and esg_cost>0.001:
         st.success(f"🌱 λ={lam}: **ESG cost = {esg_cost:.4f}** Sharpe vs max-Sharpe portfolio.")
@@ -515,28 +515,28 @@ with tab1:
                   delta=f"+£{tan_final-invest_amt:,.0f}")
         st.metric("Risk-free final value",      f"£{rf_final:,.0f}",
                   delta=f"+£{rf_final-invest_amt:,.0f}")
-        style_metric_cards(background_color="#0d1f10", border_left_color="#4ade80",
-                           border_color="#1a3a1a", box_shadow=True)
+        style_metric_cards(background_color="#0e0e12", border_left_color="#00e676",
+                           border_color="#2a2a3a", box_shadow=True)
 
     with inv_col2:
         years = np.arange(0, invest_yrs+1)
         fig_inv, ax_inv = plt.subplots(figsize=(8,4))
         apply_chart_style(ax_inv, fig_inv)
         ax_inv.plot(years, invest_amt*(1+opt["Return"])**years,
-                    color="#4ade80", lw=2.5, label=f"ESG Optimal ({opt['Return']*100:.1f}%/yr)")
+                    color="#00e676", lw=2.5, label=f"ESG Optimal ({opt['Return']*100:.1f}%/yr)")
         ax_inv.plot(years, invest_amt*(1+tan["Return"])**years,
-                    color="#ef4444", lw=1.8, ls="--", label=f"Max Sharpe ({tan['Return']*100:.1f}%/yr)")
+                    color="#ff5252", lw=1.8, ls="--", label=f"Max Sharpe ({tan['Return']*100:.1f}%/yr)")
         ax_inv.plot(years, invest_amt*(1+mv["Return"])**years,
-                    color="#60a5fa", lw=1.5, ls=":", label=f"MV Optimal ({mv['Return']*100:.1f}%/yr)")
+                    color="#448aff", lw=1.5, ls=":", label=f"MV Optimal ({mv['Return']*100:.1f}%/yr)")
         ax_inv.plot(years, invest_amt*(1+r_free)**years,
                     color="white", lw=1.2, ls="-.", alpha=0.5, label=f"Risk-free ({r_free*100:.1f}%/yr)")
         ax_inv.fill_between(years, invest_amt*(1+opt["Return"])**years,
-                             invest_amt*(1+r_free)**years, color="#4ade80", alpha=0.06)
+                             invest_amt*(1+r_free)**years, color="#00e676", alpha=0.06)
         ax_inv.set_xlabel("Years", fontsize=10)
         ax_inv.set_ylabel("Portfolio Value (£)", fontsize=10)
         ax_inv.set_title(f"£{invest_amt:,} invested over {invest_yrs} years", fontsize=10, fontweight="bold")
-        ax_inv.legend(fontsize=8, facecolor="#0d1f10", labelcolor="#b8debb",
-                      edgecolor="#1a3a1a", framealpha=0.9)
+        ax_inv.legend(fontsize=8, facecolor="#0e0e12", labelcolor="#c8ccd8",
+                      edgecolor="#2a2a3a", framealpha=0.9)
         ax_inv.yaxis.set_major_formatter(plt.FuncFormatter(lambda x,_: f"£{x:,.0f}"))
         plt.tight_layout()
         st.pyplot(fig_inv)
@@ -593,7 +593,7 @@ with tab2:
     st.subheader("ESG-Efficient Frontier", divider="green")
 
     fig, axes = plt.subplots(1,2,figsize=(13,5.5))
-    fig.patch.set_facecolor("#060a06")
+    fig.patch.set_facecolor("#0e0e12")
     for ax in axes: apply_chart_style(ax,fig)
 
     ax = axes[0]
@@ -601,50 +601,50 @@ with tab2:
                     c=portfolios["ESG Score"], cmap="RdYlGn", s=12, alpha=0.85,
                     vmin=0, vmax=100, zorder=2)
     cbar = fig.colorbar(sc,ax=ax,pad=0.02)
-    cbar.set_label("Portfolio ESG Score",color="#b8debb",fontsize=9)
-    cbar.ax.yaxis.set_tick_params(color="#b8debb")
-    plt.setp(cbar.ax.yaxis.get_ticklabels(),color="#b8debb",fontsize=8)
-    cbar.outline.set_edgecolor("#1a3a1a")
+    cbar.set_label("Portfolio ESG Score",color="#c8ccd8",fontsize=9)
+    cbar.ax.yaxis.set_tick_params(color="#c8ccd8")
+    plt.setp(cbar.ax.yaxis.get_ticklabels(),color="#c8ccd8",fontsize=8)
+    cbar.outline.set_edgecolor("#2a2a3a")
 
     if tan["Volatility"]>0:
         sdr = np.linspace(0,portfolios["Volatility"].max()*1.25,200)
         ax.plot(sdr*100,(r_free+(tan["Return"]-r_free)/tan["Volatility"]*sdr)*100,
-                "--",color="#60a5fa",lw=1.5,label="CML",alpha=0.85)
+                "--",color="#448aff",lw=1.5,label="CML",alpha=0.85)
     sc2 = np.linspace(0.001,portfolios["Volatility"].max()*1.25,200)
     Umv = float(mv["Return"])-(gamma/2)*float(mv["Volatility"])**2
-    ax.plot(sc2*100,(Umv+(gamma/2)*sc2**2)*100,":",color="#60a5fa",lw=1.5,label="MV Indiff.")
+    ax.plot(sc2*100,(Umv+(gamma/2)*sc2**2)*100,":",color="#448aff",lw=1.5,label="MV Indiff.")
     Uesg=float(opt["Utility"])
     ax.plot(sc2*100,((Uesg-lam*float(opt["ESG Score"]))+(gamma/2)*sc2**2)*100,
-            "-.",color="#f59e0b",lw=1.5,label="ESG Indiff.")
+            "-.",color="#ff9100",lw=1.5,label="ESG Indiff.")
 
     ax.scatter(0,r_free*100,s=90,marker="s",color="white",zorder=6,label="Risk-Free",ec="#555",lw=0.8)
-    ax.scatter(mvp["Volatility"]*100,mvp["Return"]*100,s=100,marker="D",color="#22d3ee",zorder=6,label="Min Var.",ec="white",lw=0.5)
-    ax.scatter(tan["Volatility"]*100,tan["Return"]*100,s=200,marker="*",color="#ef4444",zorder=7,label="Tangency",ec="white",lw=0.5)
-    ax.scatter(mv["Volatility"]*100,mv["Return"]*100,s=140,marker="^",color="#60a5fa",zorder=6,label="MV Opt.",ec="white",lw=0.5)
-    ax.scatter(opt["Volatility"]*100,opt["Return"]*100,s=200,marker="*",color="#4ade80",zorder=7,
+    ax.scatter(mvp["Volatility"]*100,mvp["Return"]*100,s=100,marker="D",color="#00b0ff",zorder=6,label="Min Var.",ec="white",lw=0.5)
+    ax.scatter(tan["Volatility"]*100,tan["Return"]*100,s=200,marker="*",color="#ff5252",zorder=7,label="Tangency",ec="white",lw=0.5)
+    ax.scatter(mv["Volatility"]*100,mv["Return"]*100,s=140,marker="^",color="#448aff",zorder=6,label="MV Opt.",ec="white",lw=0.5)
+    ax.scatter(opt["Volatility"]*100,opt["Return"]*100,s=200,marker="*",color="#00e676",zorder=7,
                label=f"ESG Opt. ({opt['Weight Asset 1']*100:.0f}%/{opt['Weight Asset 2']*100:.0f}%)",ec="white",lw=0.5)
     ax.set_xlabel("Risk — Std Dev (%)",fontsize=10); ax.set_ylabel("Expected Return (%)",fontsize=10)
     ax.set_title("Mean–Variance Space\n(colour = ESG score)",fontsize=10,fontweight="bold")
-    ax.legend(fontsize=7,loc="upper left",facecolor="#0d1f10",labelcolor="#b8debb",framealpha=0.9,edgecolor="#1a3a1a")
+    ax.legend(fontsize=7,loc="upper left",facecolor="#0e0e12",labelcolor="#c8ccd8",framealpha=0.9,edgecolor="#2a2a3a")
     ax.set_ylim(min(r_free-0.005,portfolios["Return"].min()-0.005)*100,portfolios["Return"].max()*1.18*100)
     ax.set_xlim(-0.3,portfolios["Volatility"].max()*1.12*100)
 
     ax2=axes[1]
-    ax2.plot(portfolios["ESG Score"],portfolios["Sharpe Ratio"],color="#4ade80",lw=2.5)
+    ax2.plot(portfolios["ESG Score"],portfolios["Sharpe Ratio"],color="#00e676",lw=2.5)
     ax2.fill_between(portfolios["ESG Score"],portfolios["Sharpe Ratio"],
-                     portfolios["Sharpe Ratio"].min(),color="#4ade80",alpha=0.07)
-    ax2.scatter(opt["ESG Score"],opt["Sharpe Ratio"],s=200,marker="*",color="#4ade80",zorder=5,label="Your ESG Optimal",ec="white",lw=0.5)
-    ax2.scatter(tan["ESG Score"],tan["Sharpe Ratio"],s=160,marker="*",color="#ef4444",zorder=5,label="Max Sharpe",ec="white",lw=0.5)
-    ax2.axhline(float(tan["Sharpe Ratio"]),color="#ef4444",ls="--",lw=0.9,alpha=0.5)
+                     portfolios["Sharpe Ratio"].min(),color="#00e676",alpha=0.07)
+    ax2.scatter(opt["ESG Score"],opt["Sharpe Ratio"],s=200,marker="*",color="#00e676",zorder=5,label="Your ESG Optimal",ec="white",lw=0.5)
+    ax2.scatter(tan["ESG Score"],tan["Sharpe Ratio"],s=160,marker="*",color="#ff5252",zorder=5,label="Max Sharpe",ec="white",lw=0.5)
+    ax2.axhline(float(tan["Sharpe Ratio"]),color="#ff5252",ls="--",lw=0.9,alpha=0.5)
     if esg_cost>0.001:
         ax2.annotate(f"ESG cost: −{esg_cost:.3f}",
                      xy=(float(opt["ESG Score"]),float(opt["Sharpe Ratio"])),
                      xytext=(float(opt["ESG Score"])+2,float(opt["Sharpe Ratio"])-0.03),
-                     color="#f59e0b",fontsize=9,fontweight="bold",
-                     arrowprops=dict(arrowstyle="->",color="#f59e0b",lw=1.2))
+                     color="#ff9100",fontsize=9,fontweight="bold",
+                     arrowprops=dict(arrowstyle="->",color="#ff9100",lw=1.2))
     ax2.set_xlabel("Portfolio ESG Score",fontsize=10); ax2.set_ylabel("Sharpe Ratio",fontsize=10)
     ax2.set_title("ESG–Sharpe Frontier",fontsize=10,fontweight="bold")
-    ax2.legend(fontsize=8,facecolor="#0d1f10",labelcolor="#b8debb",framealpha=0.9,edgecolor="#1a3a1a")
+    ax2.legend(fontsize=8,facecolor="#0e0e12",labelcolor="#c8ccd8",framealpha=0.9,edgecolor="#2a2a3a")
 
     plt.tight_layout(pad=2.0)
     with chart_container(portfolios[["Weight Asset 1","Return","Volatility","ESG Score","Sharpe Ratio","Utility"]],
@@ -658,21 +658,21 @@ with tab2:
 
     def draw_pie(ax, fig_p, w1, w2, t1, t2, title):
         apply_chart_style(ax, fig_p)
-        ax.set_facecolor("#060a06")
+        ax.set_facecolor("#0e0e12")
         sizes = [w1, w2] if w1+w2>0 else [0.5, 0.5]
-        colors= ["#4ade80","#3b9eca"]
+        colors= ["#00e676","#448aff"]
         wedges, texts, autotexts = ax.pie(
             sizes, labels=[t1,t2], colors=colors,
             autopct="%1.1f%%", startangle=90,
-            wedgeprops=dict(edgecolor="#0d1f10",linewidth=2),
-            textprops=dict(color="#b8debb",fontsize=9),
+            wedgeprops=dict(edgecolor="#0e0e12",linewidth=2),
+            textprops=dict(color="#c8ccd8",fontsize=9),
         )
-        for at in autotexts: at.set_color("#0d1f10"); at.set_fontweight("bold"); at.set_fontsize(9)
-        ax.set_title(title, color="#4ade80", fontsize=10, fontweight="bold")
+        for at in autotexts: at.set_color("#0e0e12"); at.set_fontweight("bold"); at.set_fontsize(9)
+        ax.set_title(title, color="#00e676", fontsize=10, fontweight="bold")
 
     with pie_col1:
         fig_p1,ax_p1 = plt.subplots(figsize=(4,4))
-        fig_p1.patch.set_facecolor("#060a06")
+        fig_p1.patch.set_facecolor("#0e0e12")
         draw_pie(ax_p1,fig_p1,
                  float(opt["Weight Asset 1"]),float(opt["Weight Asset 2"]),
                  name1,name2,"ESG Optimal (you)")
@@ -681,7 +681,7 @@ with tab2:
 
     with pie_col2:
         fig_p2,ax_p2 = plt.subplots(figsize=(4,4))
-        fig_p2.patch.set_facecolor("#060a06")
+        fig_p2.patch.set_facecolor("#0e0e12")
         draw_pie(ax_p2,fig_p2,
                  float(tan["Weight Asset 1"]),float(tan["Weight Asset 2"]),
                  name1,name2,"Tangency / Max Sharpe")
@@ -704,8 +704,8 @@ with tab2:
         c_b.metric(f"{ico} {pillar} — {name2}", f"{sc2:.0f}/100",
                    delta=f"{'↑' if sc2>sc1 else '↓'} {diff:.0f} vs {name1}")
         c_c.markdown(f"**Winner:** {winner}")
-        style_metric_cards(background_color="#0d1f10",border_left_color="#4ade80",
-                           border_color="#1a3a1a",box_shadow=False)
+        style_metric_cards(background_color="#0e0e12",border_left_color="#00e676",
+                           border_color="#2a2a3a",box_shadow=False)
 
     st.divider()
     # ESG pillar bar chart
@@ -713,14 +713,14 @@ with tab2:
     fig2,ax3 = plt.subplots(figsize=(7,3.5))
     apply_chart_style(ax3,fig2)
     x=np.arange(3); width=0.35
-    bars1=ax3.bar(x-width/2,[e1,s1,g1],width,label=name1,color="#4ade80",alpha=0.85)
-    bars2=ax3.bar(x+width/2,[e2,s2,g2],width,label=name2,color="#3b9eca",alpha=0.85)
-    ax3.set_xticks(x); ax3.set_xticklabels(["Environmental","Social","Governance"],color="#b8debb")
+    bars1=ax3.bar(x-width/2,[e1,s1,g1],width,label=name1,color="#00e676",alpha=0.85)
+    bars2=ax3.bar(x+width/2,[e2,s2,g2],width,label=name2,color="#448aff",alpha=0.85)
+    ax3.set_xticks(x); ax3.set_xticklabels(["Environmental","Social","Governance"],color="#c8ccd8")
     ax3.set_ylabel("Score (0–100)"); ax3.set_title(f"E/S/G: {name1} vs {name2}",fontweight="bold")
-    ax3.legend(facecolor="#0d1f10",labelcolor="#b8debb",edgecolor="#1a3a1a"); ax3.set_ylim(0,115)
+    ax3.legend(facecolor="#0e0e12",labelcolor="#c8ccd8",edgecolor="#2a2a3a"); ax3.set_ylim(0,115)
     for bar in list(bars1)+list(bars2):
         ax3.text(bar.get_x()+bar.get_width()/2,bar.get_height()+1.5,f"{bar.get_height():.0f}",
-                 ha="center",va="bottom",fontsize=9,color="#b8debb")
+                 ha="center",va="bottom",fontsize=9,color="#c8ccd8")
     plt.tight_layout(); st.pyplot(fig2); plt.close(fig2)
 
 # ══════════════════════════════════════════════
@@ -741,18 +741,18 @@ with tab3:
             volg.append(portfolio_sd(w)*100); srg.append(p_sharpe(w))
 
         fig_g,axes_g=plt.subplots(2,2,figsize=(12,7))
-        fig_g.patch.set_facecolor("#060a06")
-        fig_g.suptitle(f"Effect of γ on Optimal Portfolio (λ={lam} fixed)",color="#4ade80",fontweight="bold",fontsize=11)
-        for ax,(yd,yl,col) in zip(axes_g.flat,[(w1g,f"{name1} Weight (%)",  "#4ade80"),
-                                                (volg,"Risk σ (%)",          "#ef4444"),
-                                                (retg,"Expected Return (%)","#60a5fa"),
-                                                (srg, "Sharpe Ratio",        "#f59e0b")]):
+        fig_g.patch.set_facecolor("#0e0e12")
+        fig_g.suptitle(f"Effect of γ on Optimal Portfolio (λ={lam} fixed)",color="#00e676",fontweight="bold",fontsize=11)
+        for ax,(yd,yl,col) in zip(axes_g.flat,[(w1g,f"{name1} Weight (%)",  "#00e676"),
+                                                (volg,"Risk σ (%)",          "#ff5252"),
+                                                (retg,"Expected Return (%)","#448aff"),
+                                                (srg, "Sharpe Ratio",        "#ff9100")]):
             apply_chart_style(ax,fig_g)
             ax.plot(gammas,yd,color=col,lw=2.2)
             ax.axvline(gamma,color="white",ls="--",lw=1,alpha=0.5,label=f"Your γ={gamma}")
             ax.fill_between(gammas,yd,min(yd),color=col,alpha=0.07)
             ax.set_xlabel("γ",fontsize=9); ax.set_ylabel(yl,fontsize=9)
-            ax.legend(fontsize=7,facecolor="#0d1f10",labelcolor="#b8debb",edgecolor="#1a3a1a",framealpha=0.9)
+            ax.legend(fontsize=7,facecolor="#0e0e12",labelcolor="#c8ccd8",edgecolor="#2a2a3a",framealpha=0.9)
         plt.tight_layout(pad=2.0); st.pyplot(fig_g); plt.close(fig_g)
         st.info(f"At γ={gamma}: **{opt['Weight Asset 1']*100:.1f}%** in {name1}, σ=**{opt['Volatility']*100:.2f}%**, Sharpe=**{opt['Sharpe Ratio']:.3f}**")
 
@@ -767,19 +767,19 @@ with tab3:
             srl.append(sr); esgl.append(av_esg(w)); costl.append(max(tan_sr-sr,0))
 
         fig_l,axes_l=plt.subplots(1,3,figsize=(14,5))
-        fig_l.patch.set_facecolor("#060a06")
-        fig_l.suptitle(f"Effect of λ (γ={gamma} fixed)",color="#4ade80",fontweight="bold",fontsize=11)
+        fig_l.patch.set_facecolor("#0e0e12")
+        fig_l.suptitle(f"Effect of λ (γ={gamma} fixed)",color="#00e676",fontweight="bold",fontsize=11)
         for ax,(yd,xl,yl,col,ttl) in zip(axes_l,[
-            (w1l,  lambdas,f"{name1} Weight (%)","#4ade80","Allocation vs λ"),
-            (esgl, lambdas,"Portfolio ESG Score","#3b9eca","ESG Score vs λ"),
-            (costl,lambdas,"ESG Cost (Sharpe)","#f59e0b","ESG Cost vs λ"),
+            (w1l,  lambdas,f"{name1} Weight (%)","#00e676","Allocation vs λ"),
+            (esgl, lambdas,"Portfolio ESG Score","#448aff","ESG Score vs λ"),
+            (costl,lambdas,"ESG Cost (Sharpe)","#ff9100","ESG Cost vs λ"),
         ]):
             apply_chart_style(ax,fig_l)
             ax.plot(xl,yd,color=col,lw=2.2)
             ax.axvline(lam,color="white",ls="--",lw=1,alpha=0.5,label=f"Your λ={lam}")
             ax.fill_between(xl,yd,min(yd),color=col,alpha=0.07)
             ax.set_xlabel("λ",fontsize=9); ax.set_ylabel(yl,fontsize=9); ax.set_title(ttl,fontweight="bold")
-            ax.legend(fontsize=7,facecolor="#0d1f10",labelcolor="#b8debb",edgecolor="#1a3a1a",framealpha=0.9)
+            ax.legend(fontsize=7,facecolor="#0e0e12",labelcolor="#c8ccd8",edgecolor="#2a2a3a",framealpha=0.9)
         plt.tight_layout(pad=2.0); st.pyplot(fig_l); plt.close(fig_l)
         st.info(f"At λ={lam}: ESG score=**{opt['ESG Score']:.1f}**, ESG cost=**{esg_cost:.4f}** Sharpe.")
 
@@ -797,19 +797,19 @@ with tab3:
             opt_w1_r.append(weights[bi]*100); opt_sr_r.append(sh_r(weights[bi]))
 
         fig_r,axes_r=plt.subplots(1,3,figsize=(14,5))
-        fig_r.patch.set_facecolor("#060a06")
-        fig_r.suptitle(f"Effect of Correlation ρ (γ={gamma}, λ={lam} fixed)",color="#4ade80",fontweight="bold",fontsize=11)
+        fig_r.patch.set_facecolor("#0e0e12")
+        fig_r.suptitle(f"Effect of Correlation ρ (γ={gamma}, λ={lam} fixed)",color="#00e676",fontweight="bold",fontsize=11)
         for ax,(yd,yl,col,ttl) in zip(axes_r,[
-            (mvp_vol_r,"Min-Var σ (%)","#ef4444","Diversification Benefit"),
-            (opt_w1_r, f"Optimal {name1} (%)","#4ade80","Allocation vs ρ"),
-            (opt_sr_r, "ESG-Opt Sharpe","#f59e0b","Sharpe vs ρ"),
+            (mvp_vol_r,"Min-Var σ (%)","#ff5252","Diversification Benefit"),
+            (opt_w1_r, f"Optimal {name1} (%)","#00e676","Allocation vs ρ"),
+            (opt_sr_r, "ESG-Opt Sharpe","#ff9100","Sharpe vs ρ"),
         ]):
             apply_chart_style(ax,fig_r)
             ax.plot(rhos,yd,color=col,lw=2.2)
             ax.axvline(rho,color="white",ls="--",lw=1,alpha=0.5,label=f"Your ρ={rho}")
             ax.fill_between(rhos,yd,min(yd),color=col,alpha=0.07)
             ax.set_xlabel("ρ",fontsize=9); ax.set_ylabel(yl,fontsize=9); ax.set_title(ttl,fontweight="bold")
-            ax.legend(fontsize=7,facecolor="#0d1f10",labelcolor="#b8debb",edgecolor="#1a3a1a",framealpha=0.9)
+            ax.legend(fontsize=7,facecolor="#0e0e12",labelcolor="#c8ccd8",edgecolor="#2a2a3a",framealpha=0.9)
         plt.tight_layout(pad=2.0); st.pyplot(fig_r); plt.close(fig_r)
         st.info(f"At ρ={rho}: min-variance σ=**{mvp['Volatility']*100:.2f}%**. {'Diversification is beneficial.' if rho<0.7 else 'Limited diversification benefit.'}")
 
@@ -822,15 +822,15 @@ with tab3:
         apply_chart_style(ax_h,fig_h)
         im=ax_h.contourf(WW*100,LL,UU,levels=30,cmap="RdYlGn")
         cb=fig_h.colorbar(im,ax=ax_h)
-        cb.set_label("Utility U",color="#b8debb"); cb.ax.yaxis.set_tick_params(color="#b8debb")
-        plt.setp(cb.ax.yaxis.get_ticklabels(),color="#b8debb"); cb.outline.set_edgecolor("#1a3a1a")
-        ax_h.scatter(opt["Weight Asset 1"]*100,lam,s=250,marker="*",color="#4ade80",zorder=5,ec="white",lw=0.8,
+        cb.set_label("Utility U",color="#c8ccd8"); cb.ax.yaxis.set_tick_params(color="#c8ccd8")
+        plt.setp(cb.ax.yaxis.get_ticklabels(),color="#c8ccd8"); cb.outline.set_edgecolor("#2a2a3a")
+        ax_h.scatter(opt["Weight Asset 1"]*100,lam,s=250,marker="*",color="#00e676",zorder=5,ec="white",lw=0.8,
                      label=f"Your optimum (w₁={opt['Weight Asset 1']*100:.0f}%, λ={lam})")
-        ax_h.axvline(opt["Weight Asset 1"]*100,color="#4ade80",ls="--",lw=0.8,alpha=0.4)
-        ax_h.axhline(lam,color="#4ade80",ls="--",lw=0.8,alpha=0.4)
+        ax_h.axvline(opt["Weight Asset 1"]*100,color="#00e676",ls="--",lw=0.8,alpha=0.4)
+        ax_h.axhline(lam,color="#00e676",ls="--",lw=0.8,alpha=0.4)
         ax_h.set_xlabel(f"Weight in {name1} (%)",fontsize=10); ax_h.set_ylabel("λ",fontsize=10)
         ax_h.set_title(f"Utility Surface (γ={gamma} fixed)  — brighter = higher U",fontsize=10,fontweight="bold")
-        ax_h.legend(fontsize=8,facecolor="#0d1f10",labelcolor="#b8debb",edgecolor="#1a3a1a",framealpha=0.9)
+        ax_h.legend(fontsize=8,facecolor="#0e0e12",labelcolor="#c8ccd8",edgecolor="#2a2a3a",framealpha=0.9)
         plt.tight_layout(); st.pyplot(fig_h); plt.close(fig_h)
 
 # ══════════════════════════════════════════════
@@ -852,18 +852,18 @@ with tab4:
         st.metric("Risk Type",inv_type,help=inv_desc); st.metric("ESG Profile",esg_type,help=esg_desc)
         st.caption(inv_desc); st.caption(esg_desc)
         if persona!="Custom (manual)": st.info(f"📌 Persona: **{persona}**")
-        style_metric_cards(background_color="#0d1f10",border_left_color="#4ade80",border_color="#1a3a1a",box_shadow=True)
+        style_metric_cards(background_color="#0e0e12",border_left_color="#00e676",border_color="#2a2a3a",box_shadow=True)
         st.divider()
         st.subheader("Sustainability Trade-Off",divider="green")
         cost_lbl="low" if esg_cost_pct<10 else ("moderate" if esg_cost_pct<25 else "high")
         annotated_text(
             "ESG cost: ",
             (f"−{esg_cost:.4f} Sharpe",cost_lbl,
-             "#166534" if cost_lbl=="low" else "#854d0e" if cost_lbl=="moderate" else "#7f1d1d"),
+             "#00c853" if cost_lbl=="low" else "#ff9100" if cost_lbl=="moderate" else "#ff5252"),
             "  ·  Your ESG score: ",
-            (f"{opt['ESG Score']:.1f}","your portfolio","#166534"),
+            (f"{opt['ESG Score']:.1f}","your portfolio","#00c853"),
             "  vs tangency: ",
-            (f"{tan['ESG Score']:.1f}","max-Sharpe","#7f1d1d"),
+            (f"{tan['ESG Score']:.1f}","max-Sharpe","#ff5252"),
         )
     with col_b:
         st.subheader("Allocation Explained",divider="green")
@@ -996,36 +996,36 @@ with tab6:
     ]
     for col,(lbl,va,vb) in zip(comp_cols,metrics):
         col.metric(lbl,f"{sa_label}: {va}",delta=f"{sb_label}: {vb}")
-    style_metric_cards(background_color="#0d1f10",border_left_color="#4ade80",
-                       border_color="#1a3a1a",box_shadow=True)
+    style_metric_cards(background_color="#0e0e12",border_left_color="#00e676",
+                       border_color="#2a2a3a",box_shadow=True)
 
     sharpe_comp=st.columns(2)
     sharpe_comp[0].metric(f"Sharpe — {sa_label}",f"{sa['sharpe']:.3f}",
                           delta=sharpe_badge(sa['sharpe']))
     sharpe_comp[1].metric(f"Sharpe — {sb_label}",f"{sb['sharpe']:.3f}",
                           delta=sharpe_badge(sb['sharpe']))
-    style_metric_cards(background_color="#0d1f10",border_left_color="#4ade80",
-                       border_color="#1a3a1a",box_shadow=True)
+    style_metric_cards(background_color="#0e0e12",border_left_color="#00e676",
+                       border_color="#2a2a3a",box_shadow=True)
 
     # Side-by-side frontier chart
     st.divider()
     fig_sc,axes_sc=plt.subplots(1,2,figsize=(13,5))
-    fig_sc.patch.set_facecolor("#060a06")
-    fig_sc.suptitle("Scenario Comparison — Efficient Frontiers",color="#4ade80",fontweight="bold",fontsize=11)
+    fig_sc.patch.set_facecolor("#0e0e12")
+    fig_sc.suptitle("Scenario Comparison — Efficient Frontiers",color="#00e676",fontweight="bold",fontsize=11)
     for ax in axes_sc: apply_chart_style(ax,fig_sc)
 
-    for ax,(scen,col,lbl) in zip(axes_sc,[(sa,"#4ade80",sa_label),(sb,"#3b9eca",sb_label)]):
+    for ax,(scen,col,lbl) in zip(axes_sc,[(sa,"#00e676",sa_label),(sb,"#448aff",sb_label)]):
         ax.scatter(portfolios["Volatility"]*100,portfolios["Return"]*100,
                    c=portfolios["ESG Score"],cmap="RdYlGn",s=10,alpha=0.6,vmin=0,vmax=100,zorder=2)
         ax.scatter(scen["sd"]*100,scen["ret"]*100,s=250,marker="*",color=col,zorder=7,
                    label=f"{lbl}\nW₁={scen['w1']*100:.0f}% | SR={scen['sharpe']:.3f}",
                    ec="white",lw=0.8)
-        ax.scatter(float(tan["Volatility"])*100,float(tan["Return"])*100,s=150,marker="*",color="#ef4444",
+        ax.scatter(float(tan["Volatility"])*100,float(tan["Return"])*100,s=150,marker="*",color="#ff5252",
                    zorder=6,label="Tangency",ec="white",lw=0.5)
         ax.set_xlabel("Risk σ (%)",fontsize=9); ax.set_ylabel("Return (%)",fontsize=9)
         ax.set_title(f"{lbl}  (γ={sa_gamma if col=='#4ade80' else sb_gamma}, λ={sa_lam if col=='#4ade80' else sb_lam})",
                      fontsize=9,fontweight="bold")
-        ax.legend(fontsize=8,facecolor="#0d1f10",labelcolor="#b8debb",edgecolor="#1a3a1a",framealpha=0.9)
+        ax.legend(fontsize=8,facecolor="#0e0e12",labelcolor="#c8ccd8",edgecolor="#2a2a3a",framealpha=0.9)
         ax.set_ylim(portfolios["Return"].min()*100*0.95,portfolios["Return"].max()*100*1.15)
         ax.set_xlim(0,portfolios["Volatility"].max()*100*1.1)
 
