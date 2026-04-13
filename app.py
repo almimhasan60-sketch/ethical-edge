@@ -931,17 +931,21 @@ with tab3:
 
     with exp4:
         st.markdown("#### Utility Surface — risky mix weight × λ")
-        st.caption("Shows utility across all (w₁, λ) combinations at your current γ. Brighter = higher utility.")
+        st.caption("Shows utility across all (w₁, λ) combinations at your current γ. Brighter = higher utility. "
+                   "The star marks your optimal risky-mix split. If it sits at 0% it means the greener asset "
+                   "dominates the entire risky portion — try reducing λ or increasing Asset 1's ESG score to see a split.")
         w_grid   = np.linspace(0, 1, 80)
         lam_grid = np.linspace(0, 4, 80)
 
-        # Build UU inline — no p_utility dependency, direct formula
-        # U(w1, lam_v) = (w1*(r1-rf) + (1-w1)*(r2-rf)) - (gamma/2)*var(w1) + lam_v*esg(w1)
-        _w_arr = w_grid
+        # Normalise ESG to 0-1 so λ·s̄ is comparable to return/variance terms
+        esg1_n = esg1 / 100.0
+        esg2_n = esg2 / 100.0
+
+        _w_arr   = w_grid
         _var_arr = (_w_arr**2*sd1**2 + (1-_w_arr)**2*sd2**2
                     + 2*rho*_w_arr*(1-_w_arr)*sd1*sd2)
         _ret_arr = _w_arr*(r1-r_free) + (1-_w_arr)*(r2-r_free)
-        _esg_arr = _w_arr*esg1 + (1-_w_arr)*esg2
+        _esg_arr = _w_arr*esg1_n + (1-_w_arr)*esg2_n  # normalised 0–1
 
         UU = np.zeros((len(lam_grid), len(w_grid)))
         for i, lv in enumerate(lam_grid):
@@ -956,14 +960,24 @@ with tab3:
         plt.setp(cb.ax.yaxis.get_ticklabels(), color="#c8ccd8")
         cb.outline.set_edgecolor("#2a2a3a")
 
-        # Plot the optimal risky mix fraction (not the free weight)
+        # Star at the risky-mix fraction of the optimal solution
         opt_w1_mix = float(x_opt[0]) / (float(x_opt[0])+float(x_opt[1])) \
                      if (float(x_opt[0])+float(x_opt[1])) > 1e-10 else 0.5
-        ax_h.scatter(opt_w1_mix*100, lam, s=250, marker="*",
-                     color="#00e676", zorder=5, ec="white", lw=0.8,
-                     label=f"Your optimum (risky mix {name1}={opt_w1_mix*100:.0f}%, λ={lam})")
-        ax_h.axvline(opt_w1_mix*100, color="#00e676", ls="--", lw=0.8, alpha=0.4)
-        ax_h.axhline(lam, color="#00e676", ls="--", lw=0.8, alpha=0.4)
+        ax_h.scatter(opt_w1_mix*100, lam, s=300, marker="*",
+                     color="#00e676", zorder=6, ec="white", lw=1.2,
+                     label=f"Your optimum ({name1}={opt_w1_mix*100:.0f}% of risky mix, λ={lam})")
+        ax_h.axvline(opt_w1_mix*100, color="#00e676", ls="--", lw=1.2, alpha=0.6)
+        ax_h.axhline(lam, color="#00e676", ls="--", lw=1.2, alpha=0.6)
+        # Annotation label so star is visible even at edges
+        offset_x = 3 if opt_w1_mix < 0.5 else -3
+        ha = "left" if opt_w1_mix < 0.5 else "right"
+        ax_h.annotate(
+            f"  ★ Optimum\n  {name1}={opt_w1_mix*100:.0f}%\n  λ={lam}",
+            xy=(opt_w1_mix*100, lam),
+            xytext=(opt_w1_mix*100 + offset_x*4, lam + 0.3),
+            color="#00e676", fontsize=8, fontweight="bold", ha=ha,
+            arrowprops=dict(arrowstyle="->", color="#00e676", lw=1),
+        )
         ax_h.set_xlabel(f"Weight in {name1} (% of risky mix)", fontsize=10)
         ax_h.set_ylabel("λ", fontsize=10)
         ax_h.set_title(f"Utility Surface  (γ={gamma} fixed)  — brighter = higher U",
