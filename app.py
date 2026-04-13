@@ -40,7 +40,6 @@ st.set_page_config(
 )
 st.title("⚖️ Ethical Edge")
 st.caption("Sustainable Portfolio Optimiser · ECN316 Sustainable Finance · QMUL")
-st.latex(r"\text{Objective: } \max\; \mathbf{x}'\boldsymbol{\mu} - \frac{\gamma}{2}\mathbf{x}'\boldsymbol{\Sigma}\mathbf{x} + \lambda\bar{s}")
 st.divider()
 
 # ─────────────────────────────────────────────
@@ -892,28 +891,31 @@ with tab3:
         for rh in rhos_r:
             cov_r = np.array([[sd1**2, rh*sd1*sd2],[rh*sd1*sd2, sd2**2]])
             mu_r  = np.array([r1-r_free, r2-r_free])
-            def vfn(x, c=cov_r): return float(x @ c @ x)
-            rm = minimize(vfn, [0.4, 0.4], method="SLSQP", bounds=_bnds)
-            mvp_vr.append(np.sqrt(max(rm.fun, 0))*100)
-            def ofn(x, c=cov_r, m=mu_r):
-                t  = x[0]+x[1]
-                sb = (x[0]*esg1+x[1]*esg2)/t if t > 1e-10 else 0
-                return -(float(x@m) - (gamma/2)*float(x@c@x) + lam*sb)
-            ro  = minimize(ofn, [0.4, 0.4], method="SLSQP", bounds=_bnds)
-            xr  = ro.x
-            ret_r = r_free + float(xr @ mu_r)
-            sd_r  = np.sqrt(max(float(xr @ cov_r @ xr), 0))
-            opt_w1r.append(xr[0]*100)
-            opt_srr.append((ret_r-r_free)/sd_r if sd_r > 1e-10 else 0)
+
+            # Min variance — vectorised over weights
+            _w   = np.linspace(0, 1, 500)
+            _v   = np.sqrt(np.maximum(
+                       _w**2*sd1**2 + (1-_w)**2*sd2**2 + 2*rh*_w*(1-_w)*sd1*sd2, 0))
+            mvp_vr.append(float(_v.min())*100)
+
+            # ESG-optimal at this rho — vectorised utility
+            _r   = r_free + _w*(r1-r_free) + (1-_w)*(r2-r_free)
+            _var = _w**2*sd1**2 + (1-_w)**2*sd2**2 + 2*rh*_w*(1-_w)*sd1*sd2
+            _esg = _w*esg1 + (1-_w)*esg2
+            _u   = (_r - r_free) - (gamma/2)*_var + lam*_esg
+            bi   = int(np.argmax(_u))
+            opt_w1r.append(float(_w[bi])*100)
+            _sd_bi = float(_v[bi])
+            opt_srr.append((float(_r[bi])-r_free)/_sd_bi if _sd_bi > 1e-10 else 0.0)
 
         fig_r, axes_r = plt.subplots(1, 3, figsize=(14, 5))
         fig_r.patch.set_facecolor("#0e0e12")
         fig_r.suptitle(f"Effect of ρ  (γ={gamma}, λ={lam} fixed)",
                        color="#00e676", fontweight="bold", fontsize=11)
         for ax, (yd, yl, col, ttl) in zip(axes_r, [
-            (mvp_vr,  "Min-Var σ (%)",              "#ff5252","Diversification Benefit"),
-            (opt_w1r, f"{name1} Weight (% wealth)", "#00e676","Allocation vs ρ"),
-            (opt_srr, "ESG-Opt Sharpe",              "#ff9100","Sharpe vs ρ"),
+            (mvp_vr,  "Min-Var σ (%)",              "#ff5252", "Diversification Benefit"),
+            (opt_w1r, f"{name1} Weight (%)",         "#00e676", "Allocation vs ρ"),
+            (opt_srr, "ESG-Opt Sharpe",              "#ff9100", "Sharpe vs ρ"),
         ]):
             apply_chart_style(ax, fig_r)
             ax.plot(rhos_r, yd, color=col, lw=2.2)
@@ -929,24 +931,38 @@ with tab3:
 
     with exp4:
         st.markdown("#### Utility Surface — risky mix weight × λ")
-        st.caption("Shows objective on normalised risky frontier (x1+x2=1). Actual optimum uses free scipy weights.")
+        st.caption("Shows utility across all (w₁, λ) combinations at your current γ. Brighter = higher utility.")
         w_grid   = np.linspace(0, 1, 80)
         lam_grid = np.linspace(0, 4, 80)
-        UU = np.array([[p_utility(w_grid[j], lam_val=lam_grid[i])
-                        for j in range(len(w_grid))]
-                       for i in range(len(lam_grid))])
+
+        # Build UU inline — no p_utility dependency, direct formula
+        # U(w1, lam_v) = (w1*(r1-rf) + (1-w1)*(r2-rf)) - (gamma/2)*var(w1) + lam_v*esg(w1)
+        _w_arr = w_grid
+        _var_arr = (_w_arr**2*sd1**2 + (1-_w_arr)**2*sd2**2
+                    + 2*rho*_w_arr*(1-_w_arr)*sd1*sd2)
+        _ret_arr = _w_arr*(r1-r_free) + (1-_w_arr)*(r2-r_free)
+        _esg_arr = _w_arr*esg1 + (1-_w_arr)*esg2
+
+        UU = np.zeros((len(lam_grid), len(w_grid)))
+        for i, lv in enumerate(lam_grid):
+            UU[i, :] = _ret_arr - (gamma/2)*_var_arr + lv*_esg_arr
+
         fig_h, ax_h = plt.subplots(figsize=(10, 6))
         apply_chart_style(ax_h, fig_h)
         im = ax_h.contourf(w_grid*100, lam_grid, UU, levels=30, cmap="RdYlGn")
         cb = fig_h.colorbar(im, ax=ax_h)
-        cb.set_label("Objective U", color="#c8ccd8")
+        cb.set_label("Utility U", color="#c8ccd8")
         cb.ax.yaxis.set_tick_params(color="#c8ccd8")
         plt.setp(cb.ax.yaxis.get_ticklabels(), color="#c8ccd8")
         cb.outline.set_edgecolor("#2a2a3a")
-        ax_h.scatter(opt["Weight Asset 1"]*100, lam, s=250, marker="*",
+
+        # Plot the optimal risky mix fraction (not the free weight)
+        opt_w1_mix = float(x_opt[0]) / (float(x_opt[0])+float(x_opt[1])) \
+                     if (float(x_opt[0])+float(x_opt[1])) > 1e-10 else 0.5
+        ax_h.scatter(opt_w1_mix*100, lam, s=250, marker="*",
                      color="#00e676", zorder=5, ec="white", lw=0.8,
-                     label=f"Your optimum (x1={opt['Weight Asset 1']*100:.0f}%, λ={lam})")
-        ax_h.axvline(opt["Weight Asset 1"]*100, color="#00e676", ls="--", lw=0.8, alpha=0.4)
+                     label=f"Your optimum (risky mix {name1}={opt_w1_mix*100:.0f}%, λ={lam})")
+        ax_h.axvline(opt_w1_mix*100, color="#00e676", ls="--", lw=0.8, alpha=0.4)
         ax_h.axhline(lam, color="#00e676", ls="--", lw=0.8, alpha=0.4)
         ax_h.set_xlabel(f"Weight in {name1} (% of risky mix)", fontsize=10)
         ax_h.set_ylabel("λ", fontsize=10)
