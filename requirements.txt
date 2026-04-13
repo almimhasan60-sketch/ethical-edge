@@ -2,6 +2,6 @@ streamlit
 numpy
 matplotlib
 pandas
-plotly
+scipy
 streamlit-extras
 st-annotated-text
