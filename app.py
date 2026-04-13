@@ -4,20 +4,7 @@ ECN316 Sustainable Finance | QMUL Group Project
 Objective: max x'mu - (gamma/2) x'Sigma x + lambda * s_bar
 where x = free risky weights (remainder in risk-free asset)
 
-FIXES APPLIED:
-  1. Removed unused import requests
-  2. Fixed page_icon to valid emoji ⚖️
-  3. Fixed _stats() shadow vars g/l -> gam_/lam_
-  4. Fixed sensitivity table loop var l -> lv
-  5. Fixed gamma explorer loop var g -> gv
-  6. Fixed lambda explorer loop var l -> lv
-  7. Fixed sharpe_badge emoji (Trophy Excellent -> 🏆 Excellent)
-  8. Fixed traffic_light() to return 3 values (ico, label, colour)
-  9. Updated all helper colours to match theme (#00e676 #ff9100 #ff5252)
-  10. Fixed annotated_text colour #00c853 -> #00e676
-  11. Clamped st.progress value
-  12. apply_chart_style chart surface offset for visual depth
-  13. Improved indifference curve legend labels
+
 """
 
 import streamlit as st
